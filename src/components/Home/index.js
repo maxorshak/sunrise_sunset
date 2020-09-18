@@ -160,6 +160,7 @@ class Home extends React.Component {
                 localTime = +time.slice(0, time.search(':')) + timezone + time.slice(time.search(':'), time.length - 3)
                 break;
         }
+        if (localTime.slice(0, localTime.search(':')) < 0) localTime = +localTime.slice(0, localTime.search(':')) + 24 + localTime.slice(localTime.search(':'))
         return localTime
     }
 

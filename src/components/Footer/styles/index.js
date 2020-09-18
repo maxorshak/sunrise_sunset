@@ -2,8 +2,11 @@ import { StyleSheet } from 'react-native'
 import Colors from '../../../assets/Colors'
 
 export const styles = StyleSheet.create({
+    footer: {
+        paddingBottom: 32,
+    },
     footerText: {
-        fontSize: 12,
+        fontSize: 14,
         fontWeight: "bold",
         color: Colors.light,
         textAlign: "center",
