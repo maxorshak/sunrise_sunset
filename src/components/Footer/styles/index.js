@@ -3,7 +3,7 @@ import Colors from '../../../assets/Colors'
 
 export const styles = StyleSheet.create({
     footer: {
-        paddingBottom: 32,
+        paddingBottom: 16,
     },
     footerText: {
         fontSize: 14,

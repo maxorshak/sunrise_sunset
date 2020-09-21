@@ -8,6 +8,7 @@ import {
     PermissionsAndroid,
     TextInput,
     Alert,
+    Button,
 } from 'react-native'
 import Geolocation from 'react-native-geolocation-service'
 import axios from 'axios'
@@ -23,6 +24,7 @@ class Home extends React.Component {
         this.state = {
             locationPermission: this.getLocationPermission(),
             currentLocation: {
+                show: false,
                 city: "",
                 country: "",
                 lat: "",
@@ -31,8 +33,8 @@ class Home extends React.Component {
                 sunset: "",
                 timezone: 0,
             },
-            showInputCity: false,
             inputCity: {
+                show: false,
                 city: "",
                 lat: "",
                 lng: "",
@@ -91,6 +93,8 @@ class Home extends React.Component {
             const { sunrise, sunset } = await this.getSunriseSunset(lat, lng)
             this.setState({
                 currentLocation: {
+                    ...this.state.currentLocation,
+                    show: true,
                     city,
                     country,
                     lat,
@@ -117,6 +121,7 @@ class Home extends React.Component {
             this.setState({
                 inputCity: {
                     ...this.state.inputCity,
+                    show: true,
                     lat,
                     lng,
                     sunrise,
@@ -147,7 +152,6 @@ class Home extends React.Component {
             return
         }
         this.getInfoByCity(this.state.inputCity.city.trim())
-        this.setState({ showInputCity: true })
     }
 
     formatTimeToLocal(time, timezone) {
@@ -176,21 +180,29 @@ class Home extends React.Component {
                 <Header />
                 <View style={styles.body}>
                     <Text style={styles.title}>Information For Your Location:</Text>
-                    <Text style={styles.subtitle}>{currentLocation.city && currentLocation.country && `${currentLocation.city}, ${currentLocation.country}`}</Text>
-                    <View style={styles.sectionContainer}>
-                        <View style={styles.sectionItem}>
-                            <Image source={ImagePath.sunrise} />
-                            <Text style={styles.sectionDescription}>{currentLocation.sunrise && `Sunrise: ${this.formatTimeToLocal(currentLocation.sunrise, currentLocation.timezone)}`}</Text>
-                        </View>
-                        <View style={styles.sectionItem}>
-                            <Image source={ImagePath.sunset} />
-                            <Text style={styles.sectionDescription}>{currentLocation.sunset && `Sunset: ${this.formatTimeToLocal(currentLocation.sunset, currentLocation.timezone)}`}</Text>
-                        </View>
-                    </View>
+                    {currentLocation.show ?
+                        <>
+                            <Text style={styles.subtitle}>{currentLocation.city && currentLocation.country && `${currentLocation.city}, ${currentLocation.country}`}</Text>
+                            <View style={styles.sectionContainer}>
+                                <View style={styles.sectionItem}>
+                                    <Image source={ImagePath.sunrise} />
+                                    <Text style={styles.sectionDescription}>{currentLocation.sunrise && `Sunrise: ${this.formatTimeToLocal(currentLocation.sunrise, currentLocation.timezone)}`}</Text>
+                                </View>
+                                <View style={styles.sectionItem}>
+                                    <Image source={ImagePath.sunset} />
+                                    <Text style={styles.sectionDescription}>{currentLocation.sunset && `Sunset: ${this.formatTimeToLocal(currentLocation.sunset, currentLocation.timezone)}`}</Text>
+                                </View>
+                            </View>
+                        </>
+                        : <>
+                            <Text onPress={() => this.componentDidMount()} style={styles.subtitle}>Geolocation is unavailable!{"\n"}Please Turn GPS Location On!</Text>
+                            <Button title="Retry" onPress={() => this.componentDidMount()} />
+                        </>
+                    }
                     <Text style={styles.title}>Information By Chosen City:</Text>
                     <TextInput
                         style={styles.sectionTextInput}
-                        onChangeText={text => this.setState({ inputCity: { ...this.state.inputCity, city: text }, showInputCity: false })}
+                        onChangeText={text => this.setState({ inputCity: { ...this.state.inputCity, city: text, show: false } })}
                         value={this.state.inputCity.city}
                         placeholder="Type city here..."
                     />
@@ -200,7 +212,7 @@ class Home extends React.Component {
                     >
                         <Text style={styles.sectionButtonText}>Search</Text>
                     </TouchableOpacity>
-                    {this.state.showInputCity &&
+                    {this.state.inputCity.show &&
                         <View style={styles.sectionContainer}>
                             <View style={styles.sectionItem}>
                                 <Image source={ImagePath.sunrise} />
